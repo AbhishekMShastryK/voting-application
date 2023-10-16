@@ -6,7 +6,7 @@ const port = 3000;
 
 // Create a MySQL database connection
 const db = mysql.createConnection({
-  host: '34.172.244.200',
+  host: 'localhost',
   user: 'root',
   password: 'S]8xYoO4z;G|~Uh.',
 });
@@ -17,6 +17,19 @@ db.connect((err) => {
     throw err;
   }
   console.log('Connected to MySQL database');
+  db.query("SHOW DATABASES;",(err, res) => {
+    if(err){
+      throw err;
+    }
+    console.log(res);
+  });
+
+  db.end((err) => {
+    if(err){
+      throw err;
+    }
+    console.log("Database disconnected");
+  });
 });
 
 // Serve static files from the 'public' directory
