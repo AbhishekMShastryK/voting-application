@@ -1,17 +1,34 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export default function SignUp() {
 
-    const { register, handleSubmit, formState: { errors } } = useForm()
-    const onSubmit = data => console.log(data);
+    const { register, handleSubmit, formState: { errors }, watch } = useForm()
+    // const onSubmit = data => console.log(data);
     const [mobileNumberPlaceholder, setMobileNumberPlaceholder] = useState('Mobile number');
+    const password = watch('password');
+    const navigate = useNavigate();
     const validateMobileNumber = (value) => {
         const isValid = /^[0-9]{10}$/.test(value);
         if (!isValid) {
           return "Invalid mobile number";
         }
       };
+
+      const onSubmit = async (data) => {
+        try {
+            const response = await axios.post('http://localhost:3001/register', data);
+    
+            console.log('User registered successfully:', response.data);
+
+            // Redirect to home page
+            navigate('/home');
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
 
     // console.log(watch('username'));
     
@@ -28,16 +45,29 @@ export default function SignUp() {
                     </div>
 
                     <div className="input-container flex">
-                        <input type="text" {...register("emailid", { required: true })} placeholder='Email id' />
+                        <input type="text" {...register("emailid", { 
+                                                                    required: true, 
+                                                                    pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i 
+                                                                })} placeholder='Email id' />
                         {errors.name && <p className="error">Email id is required!</p>}
+                        {errors.emailid && errors.emailid.type === "pattern" && <p className="error">Invalid email id!</p>}
                     </div>
 
                     <div className="input-container flex">
-                        <input type="text" {...register("password")} placeholder='Password' />
-                        
+                        <input type="text" {...register("password", { 
+                                                                    required: true, 
+                                                                    minLength: 8, 
+                                                                    pattern: /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/ 
+                                                                })} placeholder='Password' />
+                        {errors.name && <p className="error">Password is required!</p>}
+                        {errors.password && errors.password.type === "minLength" && <p className="error">Password should have at least 8 characters!</p>}
+                        {errors.password && errors.password.type === "pattern" && <p className="error">Password should be alphanumeric!</p>}
                     </div>
                     <div className="input-container flex">
-                        <input type="text" {...register("confirmpwd")} placeholder='Confirm password' />
+                        <input type="text" {...register("confirmpwd", { 
+                                                                        validate: value => value === password || "The passwords do not match" 
+                                                                    })} placeholder='Confirm password' />
+                        {errors.confirmpwd && <p className="error">{errors.confirmpwd.message}</p>}
                     </div>
 
                     <div className="input-container flex">
