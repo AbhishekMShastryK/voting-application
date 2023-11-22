@@ -1,12 +1,12 @@
 import React from 'react';
 
-function HomePage() {
+function AdminHomePage() {
   return (
     <div>
-      <h1>Welcome Home!</h1>
+      <h1>Welcome to Admin Home!</h1>
       <p>You have successfully registered.</p>
     </div>
   );
 }
 
-export default HomePage;
+export default AdminHomePage;

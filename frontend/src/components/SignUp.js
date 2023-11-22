@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -10,6 +10,24 @@ export default function SignUp() {
     const [mobileNumberPlaceholder, setMobileNumberPlaceholder] = useState('Mobile number');
     const password = watch('password');
     const navigate = useNavigate();
+    const [redirectingTime, setRedirectingTime] = useState(10);
+    const [registrationSuccess, setRegistrationSuccess] = useState(false);
+
+    useEffect(() => {
+        if (registrationSuccess) {
+          const timer = setInterval(() => {
+            setRedirectingTime(prevTime => prevTime - 1);
+          }, 1000); // Update every second
+          setTimeout(() => {
+            setRegistrationSuccess(false);
+            clearInterval(timer);
+            // Redirect to home page
+            navigate('/login');
+          }, 10000); // 10 seconds
+          return () => clearTimeout(timer);
+        }
+      }, [registrationSuccess, navigate]);
+
     const validateMobileNumber = (value) => {
         const isValid = /^[0-9]{10}$/.test(value);
         if (!isValid) {
@@ -22,9 +40,8 @@ export default function SignUp() {
             const response = await axios.post('http://localhost:3001/register', data);
     
             console.log('User registered successfully:', response.data);
-
-            // Redirect to home page
-            navigate('/home');
+            setRegistrationSuccess(true);
+            
         } catch (error) {
             console.error('Error:', error);
         }
@@ -35,9 +52,15 @@ export default function SignUp() {
   return (
     <section>
         <div className="register">
+            
             <div className="col-1">  
                 <h2>Sign Up</h2>
-
+                {registrationSuccess ? (
+                <div>
+                    <p>Registered successfully!</p>
+                    <p>Redirecting to login page in {redirectingTime} seconds</p>
+                </div>
+                ) : (
                 <form id='signup' className='flex flex-col' onSubmit={handleSubmit(onSubmit)}>
                     <div className="input-container flex">
                         <input type="text" {...register("name", { required: true })} placeholder='Name' />
@@ -106,7 +129,9 @@ export default function SignUp() {
                     </div>
 
                     <button className='btn'>Register</button>
+                    <p>Already registered? <a href="/login">Login</a></p>
                 </form>
+                )}
 
             </div>
             {/* <div className="col-2">

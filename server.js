@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const cors = require('cors');
+const bcrypt = require('bcrypt');
 
 const app = express();
 const port = 3001;
@@ -39,6 +40,23 @@ app.post('/register', (req,res) => {
     return res.json(data);
   })
 })
+
+app.post('/login', (req, res) => {
+  const sql = "SELECT * FROM user_registrations WHERE `name` = ? AND `password` = ?";
+  const { name, password } = req.body;
+  db.query(sql, [name, password], (err, data) => {
+    if(err) {
+      return res.json("Error");
+    }
+    if (data.length > 0) {
+      return res.json("Success")
+    }
+    else {
+      return res.json("Failure")
+    }
+  })
+
+});
 
 db.connect((err) => {
   if (err) {
