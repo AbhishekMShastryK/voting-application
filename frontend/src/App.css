@@ -140,6 +140,52 @@ h2 {
   padding: .9em 1em;
 }
   
+#adminhome table, #adminhome th, #adminhome td {
+  border: 1px solid black;
+}
+
+#adminhome th, #adminhome td {
+  padding: 5px;
+}
+
+/* Style for approve button */
+#adminhome button.approve {
+  padding: 8px 16px;
+  margin: 5px;
+  border: none;
+  background-color: #4CAF50; /* Green */
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+#adminhome button.approve:hover {
+  background-color: #45a049;
+}
+
+/* Style for deny button */
+#adminhome button.deny {
+  padding: 8px 16px;
+  margin: 5px;
+  border: none;
+  background-color: #f44336; /* Red */
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+#adminhome button.deny:hover {
+  background-color: #d32f2f;
+}
+
 @media screen and (min-width: 860px)  {
   .register .col-2 img{
     display: initial;

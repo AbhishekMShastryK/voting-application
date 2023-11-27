@@ -37,7 +37,7 @@ export default function SignUp() {
 
       const onSubmit = async (data) => {
         try {
-            const response = await axios.post('http://localhost:3001/register', data);
+            const response = await axios.post('http://localhost:3001/register', { ...data, status: 'pending' });
     
             console.log('User registered successfully:', response.data);
             setRegistrationSuccess(true);
@@ -98,6 +98,7 @@ export default function SignUp() {
                             type="text"
                             {...register("mobilenumber", { required: true, pattern: /^[0-9]{10}$/, validate: validateMobileNumber})}
                             placeholder={mobileNumberPlaceholder}
+                            maxLength={10}
                             onClick={() => setMobileNumberPlaceholder('+1')}/>
                         {errors.mobilenumber?.type === "required" && <p className="error">Mobile Number is required!</p>}
                         {errors.mobilenumber?.type === "pattern" && <p className="error">Invalid mobile number!</p>}

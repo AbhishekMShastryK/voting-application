@@ -4,19 +4,19 @@ import axios from 'axios';
 
 const LogIn = () => {
   const navigate = useNavigate();
-  const [name, setVoterId] = useState('');
+  const [voterId, setVoterId] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [nameError, setNameError] = useState('');
+  const [voterIdError, setVoterIdError] = useState('');
   const [usernameError, setUsernameError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [selectedRole, setSelectedRole] = useState('voter'); // Default role is voter
 
   const handleLogIn = async (e) => {
     e.preventDefault();
-    if (selectedRole === 'voter' && !name) {
-      setNameError('Voter ID is required!');
+    if (selectedRole === 'voter' && !voterId) {
+      setVoterIdError('Voter ID is required!');
       return;
     }
     if (selectedRole === 'admin' && !username) {
@@ -29,9 +29,11 @@ const LogIn = () => {
     }
 
     try {
+      console.log(password)
       // Send a POST request to your backend API to validate the voter ID and password
-      axios.post('http://localhost:3001/login', { name, password })
+      axios.post('http://localhost:3001/login', { voterId, password })
       .then(res => {
+        console.log(res)
         if (username === 'admin' && password === 'admin123' && selectedRole === 'admin') {
           navigate('/adminhome');
         }
@@ -96,17 +98,17 @@ const LogIn = () => {
                   <div className="input-container flex">
                   <input
                     type="text"
-                    id="name"
+                    id="voterId"
                     placeholder="Voter ID"
-                    value={name}
+                    value={voterId}
                     onChange={(e) => setVoterId(e.target.value)}
                     onBlur={() => {
-                      if (name) {
-                        setNameError('');
+                      if (voterId) {
+                        setVoterIdError('');
                       }
                     }}
                   />
-                  {nameError && <p className="error">{nameError}</p>}
+                  {voterIdError && <p className="error">{voterIdError}</p>}
                   </div>
                 )}
                     
