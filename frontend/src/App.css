@@ -9,7 +9,11 @@ body {
   background: #FF0000;  /* fallback for old browsers */
   background: -webkit-linear-gradient(to right, #880808, #FFFFFF, #00008B);  /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(to right, #880808, #FFFFFF, #00008B); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  zoom: 100%;
 }
+
+
+
 
 .App {
   height: 100vh;
@@ -142,6 +146,7 @@ h2 {
   
 #adminhome table, #adminhome th, #adminhome td {
   border: 1px solid black;
+  margin: 0 auto;
 }
 
 #adminhome th, #adminhome td {
@@ -185,6 +190,27 @@ h2 {
 #adminhome button.deny:hover {
   background-color: #d32f2f;
 }
+
+#adminhome {
+  background-color: white;
+  min-height: 100vh;
+  padding: 5% 0; /* Adjust the padding as needed */
+  overflow-y: auto;
+  width: 100vw;
+  height:auto;
+  overflow-x: auto;
+  zoom: 100%;
+  justify-content: center;
+}
+
+#adminhome > input[type="text"] {
+  border-radius: 30px;
+  padding: 15px;
+  font-size: 18px;
+  width: 20%;
+  box-sizing: border-box;
+}
+
 
 @media screen and (min-width: 860px)  {
   .register .col-2 img{

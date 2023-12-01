@@ -3,9 +3,11 @@ const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
+require("dotenv").config()
 
 const app = express();
 const port = 3001;
+const nodemailer = require('nodemailer');
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -102,6 +104,60 @@ app.post('/update_user_status', (req,res) => {
     }
     return res.json(data);
   })
+})
+
+app.get('/search_pending_users', (req, res) => {
+  const searchTerm = req.query.searchTerm;
+  const sql = "SELECT * FROM user_registrations WHERE `name` LIKE ? OR `zipcode` = ?";
+  db.query(sql, [`%${searchTerm}%`, searchTerm], (err, data) => {
+    if (err) {
+      console.error('Error searching pending users:', err);
+      res.status(500).json({ error: 'Internal server error' });
+    } else {
+      res.json(data);
+    }
+  });
+});
+
+app.post('/sendmail', cors(), async (req,res) => {
+  const { userEmail, voterId, userstatus} = req.query;
+  const transporter = nodemailer.createTransport({
+    host: 'sandbox.smtp.mailtrap.io',
+    port: 2525,
+    auth: {
+      user: '093f0fead8d0ae',
+      pass: '8dbe22d12d1ce1'
+    }
+  });
+
+  // Email content
+  let mailOptions;
+  if (userstatus == 'approved') {
+    mailOptions = {
+      from: 'votifynow.usa@gmail.com',
+      to: userEmail,
+      subject: 'Your Registration Status',
+      text: `Congratulations! Your registration has been approved. Your voter ID is: ${voterId}`
+    };
+  } else {
+    mailOptions = {
+      from: 'votifynow.usa@gmail.com',
+      to: userEmail,
+      subject: 'Your Registration Status',
+      text: `Your registration has been rejected.`
+    };
+  }
+
+  // Send the email
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log('Error sending email:', error);
+    } else {
+      console.log('Email sent:', info.response);
+      return res.json(info.response);
+    }
+  });
+
 })
 
 db.connect((err) => {

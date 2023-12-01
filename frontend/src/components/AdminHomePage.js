@@ -4,6 +4,10 @@ import axios from 'axios';
 function AdminHomePage() {
 
     const [pendingUsers, setPendingUsers] = useState([]);
+    const [loading, setLoading] = useState(false); // Introduce a loading state
+    const [searchTerm, setSearchTerm] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+    
 
     useEffect(() => {
         const fetchPendingUsers = async () => {
@@ -18,7 +22,18 @@ function AdminHomePage() {
         fetchPendingUsers();
     }, []);
 
+    // Load search results from localStorage on component mount
+    useEffect(() => {
+      const savedSearchResults = JSON.parse(localStorage.getItem('searchResults'));
+      if (savedSearchResults) {
+        setSearchResults(savedSearchResults);
+      }
+    }, []);
+
+
     const handleApprove = async (user) => {
+      const userstatus = 'approved';
+      setLoading(true); // Set loading state to true before the approval process
       // Logic to generate 6-digit system-generated voter number
       const voterNumber = Math.floor(100000000 + Math.random() * 900000000);
   
@@ -30,8 +45,8 @@ function AdminHomePage() {
             stateName = zipcodeResponse.data.places[0].state;
           }
 
-          // Append state code to voter number
-          const voterNumberWithStateCode = `V${voterNumber}`;
+          // Append 'V' to voter number
+          const voterId = `V${voterNumber}`;
 
           // Append address with zipcode
           console.log(stateName)
@@ -43,7 +58,7 @@ function AdminHomePage() {
           console.log(addressWithZipcode);
 
           await axios.post('http://localhost:3001/approved_user_table', {
-            voterid:voterNumberWithStateCode,
+            voterid:voterId,
             name:user.name,
             password: user.password,
             emailid:user.emailid,
@@ -68,22 +83,96 @@ function AdminHomePage() {
           .catch(error => {
             console.error('Error:', error);
           });
-          
+
+          // Send approval email to the user
+          await axios.post(`http://localhost:3001/sendmail?userEmail=${user.emailid}&voterId=${voterId}&userstatus=${userstatus}`)
+          .then(mailResponse => {
+            console.log('Response:', mailResponse.data);
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+ 
           // Remove the approved user from the pendingUsers state
           setPendingUsers(prevUsers => prevUsers.filter(u => u.drivingLicense !== user.drivingLicense));
+          setLoading(false);
       } catch (error) {
-          console.error('Error creating user table:', error);
+          console.error('Error:', error);
+          setLoading(false);
       }
    };
 
-    const handleDeny = (userId) => {
-    // Logic to deny the user with userId
-    console.log('Denying user with ID:', userId);
+    const handleDeny = async (user) => {
+      const userstatus = 'rejected';
+      setLoading(true);
+      try {
+        // Make a POST call to update status in user_registration table
+        await axios.post(`http://localhost:3001/update_user_status?status=rejected&drivingLicense=${user.drivingLicense}`)
+        .then(updateResponse => {
+          console.log('Response:', updateResponse.data);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+
+        // Send rejection email to the user
+        await axios.post(`http://localhost:3001/sendmail?userEmail=${user.emailid}&voterId=${null}&userstatus=${userstatus}`)
+        .then(mailResponse => {
+          console.log('Response:', mailResponse.data);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+
+        // Remove the rejected user from the pendingUsers state
+        setPendingUsers(prevUsers => prevUsers.filter(u => u.drivingLicense !== user.drivingLicense));
+        setLoading(false);
+      } catch (error) {
+          console.error('Error:', error);
+          setLoading(false);
+      }
+    };
+
+    const handleSearch = async (e) => {
+      if (e.key === 'Enter' || e.target.id === 'searchIcon') {
+        if (searchTerm.trim() !== '') {
+          try {
+            const response = await axios.get(`http://localhost:3001/search_pending_users?searchTerm=${searchTerm}`);
+            setSearchResults(response.data);
+            // Save search results to localStorage
+            localStorage.setItem('searchResults', JSON.stringify(response.data));
+          } catch (error) {
+            console.error('Error searching pending users:', error);
+          }
+        } else {
+          setSearchResults([]); // Clear the search results if the search input is empty
+          // Clear search results from localStorage
+          localStorage.removeItem('searchResults');
+        }
+      }
     };
 
     return (
         <div id='adminhome'>
         <h1>Welcome to Admin Home!</h1>
+        <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} onKeyDown={handleSearch} placeholder="Search by name or zipcode" />
+        <div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', marginBottom:'50px' }}>
+        {searchResults.map(user => (
+          <div key={user.drivingLicense} style={{ margin: '10px', padding: '10px', border: '1px solid #ccc', width: '300px' }}>
+            <p><strong>Name:</strong> {user.name}</p>
+            <p><strong>Email:</strong> {user.emailid}</p>
+            <p><strong>Mobile Number:</strong> {user.mobilenumber}</p>
+            <p><strong>Age:</strong> {user.age}</p>
+            <p><strong>Address:</strong> {user.address}</p>
+            <p><strong>Zipcode:</strong> {user.zipcode}</p>
+            <p><strong>Driving License:</strong> {user.drivingLicense}</p>
+            <p><strong>Passport Number:</strong> {user.passportNumber}</p>
+            <p><strong>Status:</strong> {user.status}</p>
+          </div>
+        ))}
+      </div>
+    </div>
       <h2>Pending User Registrations:</h2>
       {pendingUsers.length === 0 ? (
             <p>No user to review</p>
@@ -112,8 +201,8 @@ function AdminHomePage() {
               <td>{user.drivingLicense}</td>
               <td>{user.passportNumber}</td>
               <td>
-                <button className="approve" onClick={() => handleApprove(user)}>Approve</button>
-                <button className="deny" onClick={() => handleDeny(user.drivingLicense)}>Deny</button>
+                <button className="approve" onClick={() => handleApprove(user)} disabled={loading}>Approve</button>
+                <button className="deny" onClick={() => handleDeny(user)} disabled={loading}>Deny</button>
               </td>
             </tr>
           ))}
