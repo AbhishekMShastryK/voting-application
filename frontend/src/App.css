@@ -10,6 +10,8 @@ body {
   background: -webkit-linear-gradient(to right, #880808, #FFFFFF, #00008B);  /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(to right, #880808, #FFFFFF, #00008B); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   zoom: 100%;
+  overflow-y: auto;
+  
 }
 
 
@@ -211,6 +213,82 @@ h2 {
   box-sizing: border-box;
 }
 
+
+#electionsetup {
+  background-color: white;
+  padding: 50px;
+
+}
+
+#electionsetupsubmit > button {
+  background-color: #800080;
+  color: #e9ecef;
+  font-size: 1.3em;
+  cursor: pointer;
+  margin-top: 40px;
+  height:40px;
+  width: 120px;
+  border-radius: 7px;
+}
+
+#electionsetupadd > button {
+  background-color: #228B22;
+  color: #e9ecef;
+  font-size: 1em;
+  cursor: pointer;
+  margin-top: 20px;
+  border-radius: 10px;
+  padding: 5px;
+}
+
+#electionsetup > .input-container > input {
+  border-radius: 5px; /* Updated border radius value */
+  border: 1px solid #e9ecef;
+  padding: .9em 1em;
+}
+
+#electionsetup > label > input {
+  border-radius: 5px; /* Updated border radius value */
+  border: 1px solid #e9ecef;
+  padding: .9em 1em;
+}
+
+#addinput > label > input {
+  border-radius: 5px; /* Updated border radius value */
+  border: 1px solid #e9ecef;
+  padding: .9em 1em;
+}
+
+#addinput > button {
+  border-radius: 5px; /* Updated border radius value */
+  padding: 5px;
+  color: #e9ecef;
+  background-color: #C6011F;
+  cursor: pointer;
+}
+
+#electionsetup > input:focus{
+  outline: none;
+}
+
+.election-details {
+  display: none; /* Hide the details by default */
+}
+
+p:hover + .election-details {
+  display: inline; /* Show the details when the title is hovered over */
+}
+
+.textbox {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  padding: 10px;
+  z-index: 1;
+}
 
 @media screen and (min-width: 860px)  {
   .register .col-2 img{

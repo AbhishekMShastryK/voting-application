@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import ElectionSetup from './ElectionSetup';
+import { Link } from 'react-router-dom';
 
 function AdminHomePage() {
 
@@ -7,6 +9,8 @@ function AdminHomePage() {
     const [loading, setLoading] = useState(false); // Introduce a loading state
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResults, setSearchResults] = useState([]);
+    const [electionData, setElectionData] = useState([]);
+    const [hoveredDetails, setHoveredDetails] = useState(null);
     
 
     useEffect(() => {
@@ -29,6 +33,19 @@ function AdminHomePage() {
         setSearchResults(savedSearchResults);
       }
     }, []);
+
+    useEffect(() => {
+      const fetchData = async () => {
+          try {
+              const response = await axios.get('http://localhost:3001/get_election_data');
+              setElectionData(response.data);
+          } catch (error) {
+              console.error('Error fetching election data:', error);
+          }
+      };
+
+      fetchData();
+  }, []);
 
 
     const handleApprove = async (user) => {
@@ -155,6 +172,34 @@ function AdminHomePage() {
     return (
         <div id='adminhome'>
         <h1>Welcome to Admin Home!</h1>
+        <div>
+            <h2>Upcoming Elections:</h2>
+            {electionData.length === 0 ? (
+            <p>No upcoming elections</p>
+            ) : (
+            electionData.map((election, index) => (
+              <div key={index}>
+                    <p 
+                            onMouseEnter={() => setHoveredDetails(election)} 
+                            onMouseLeave={() => setHoveredDetails(null)}>
+                            {election.title}
+                        </p>
+                    </div>
+                ))
+                )}
+        </div>
+        {hoveredDetails && (
+                <div className="textbox">
+                    <p>Title: {hoveredDetails.title}</p>
+                    <p>Start Time: {hoveredDetails.startTime}</p>
+                    <p>End Time: {hoveredDetails.endTime}</p>
+                </div>
+            )}
+        <div style={{ marginBottom: '20px' }}>
+        <Link to="/election-setup" style={{ textDecoration: 'none' }}>
+                <button style={{ padding: '10px', backgroundColor: '#800080', color: 'white', borderRadius: '5px', border: 'none', cursor: 'pointer', fontSize: '16px', marginTop: '20px' }}>Setup Election</button>
+            </Link>
+        </div>
         <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} onKeyDown={handleSearch} placeholder="Search by name or zipcode" />
         <div>
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', marginBottom:'50px' }}>

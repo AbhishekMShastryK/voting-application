@@ -4,6 +4,8 @@ const mysql = require('mysql');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 require("dotenv").config()
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
 const port = 3001;
@@ -11,6 +13,7 @@ const nodemailer = require('nodemailer');
 
 app.use(bodyParser.json());
 app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Create a MySQL database connection
 const db = mysql.createConnection({
@@ -117,6 +120,40 @@ app.get('/search_pending_users', (req, res) => {
       res.json(data);
     }
   });
+});
+
+app.post('/election_setup', (req, res) => {
+  const formData = req.body;
+  fs.readFile(path.join(__dirname, 'electionData.json'), 'utf8', (err, data) => {
+    if (err) {
+      console.error('Error reading file:', err);
+      res.status(500).json({ message: 'Error reading data from the file' });
+    } else {
+      let jsonArray = data ? JSON.parse(data) : [];
+      jsonArray.push(formData);
+      fs.writeFile(path.join(__dirname, 'electionData.json'), JSON.stringify(jsonArray, null, 2), (err) => {
+        if (err) {
+          console.error('Error writing file:', err);
+          res.status(500).json({ message: 'Error storing data in the file' });
+        } else {
+          console.log('Form data stored in file');
+          res.status(200).json({ message: 'Form data stored successfully' });
+        }
+      });
+    }
+  });
+});
+
+app.get('/get_election_data', (req, res) => {
+  try {
+    const electionDataPath = path.join(__dirname, 'electionData.json');
+    const data = fs.readFileSync(electionDataPath, 'utf8');
+    const jsonData = JSON.parse(data);
+    return res.json(jsonData);
+  } catch (error) {
+    console.error('Error reading election data file:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 app.post('/sendmail', cors(), async (req,res) => {
