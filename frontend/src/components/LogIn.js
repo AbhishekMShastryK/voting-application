@@ -13,6 +13,21 @@ const LogIn = () => {
   const [passwordError, setPasswordError] = useState('');
   const [selectedRole, setSelectedRole] = useState('voter'); // Default role is voter
 
+  function extractZipcode(fullAddress) {
+    // Regular expression to match a 5-digit zipcode
+    const zipcodeRegex = /\b\d{5}\b/g;
+    
+    // Extract the zipcode from the full address using the regular expression
+    const extractedZipcode = fullAddress.match(zipcodeRegex);
+
+    // Check if a zipcode is found and return it
+    if (extractedZipcode && extractedZipcode.length > 0) {
+      return extractedZipcode[0];
+    } else {
+      return "Zipcode not found";
+    }
+}
+
   const handleLogIn = async (e) => {
     e.preventDefault();
     if (selectedRole === 'voter' && !voterId) {
@@ -41,9 +56,10 @@ const LogIn = () => {
           setError('Invalid username or password');
         }
         if (selectedRole === "voter") {
-          if (res.data === "Success") {
+          if (res.data.status === "Success") {
+            const zipcode = extractZipcode(res.data.zipcode);
             // Redirect to the home page or dashboard
-            navigate('/voterhome');
+            navigate('/voterhome', { state: { zipcode } });
           } else {
             setError('Invalid voter ID or password');
           }

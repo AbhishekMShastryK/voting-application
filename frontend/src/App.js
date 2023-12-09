@@ -6,6 +6,7 @@ import VoterHomePage from "./components/VoterHomePage"; // Import HomePage compo
 import LogIn from './components/LogIn';
 import AdminHomePage from "./components/AdminHomePage";
 import ElectionSetup from './components/ElectionSetup';
+import ElectionDetails from './components/ElectionDetails';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/adminhome" element={<AdminHomePage />} />
           <Route path="/login" element={<LogIn />} />
           <Route path="/election-setup" element={<ElectionSetup/>} />
+          <Route path="/election-details" element={<ElectionDetails/>} />
         </Routes>
       </div>
     </Router>

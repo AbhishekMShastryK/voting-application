@@ -55,7 +55,8 @@ app.post('/login', (req, res) => {
       return res.json("Error");
     }
     if (data.length > 0) {
-      return res.json("Success")
+      const userZipcode = data[0].fulladdress;
+      return res.json({ status: "Success", zipcode: userZipcode })
     }
     else {
       return res.json("Failure")
@@ -109,7 +110,7 @@ app.post('/update_user_status', (req,res) => {
   })
 })
 
-app.get('/search_pending_users', (req, res) => {
+app.get('/search_users', (req, res) => {
   const searchTerm = req.query.searchTerm;
   const sql = "SELECT * FROM user_registrations WHERE `name` LIKE ? OR `zipcode` = ?";
   db.query(sql, [`%${searchTerm}%`, searchTerm], (err, data) => {

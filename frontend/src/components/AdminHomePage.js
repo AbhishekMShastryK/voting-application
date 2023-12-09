@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import ElectionSetup from './ElectionSetup';
 import { Link } from 'react-router-dom';
 
 function AdminHomePage() {
@@ -154,7 +153,7 @@ function AdminHomePage() {
       if (e.key === 'Enter' || e.target.id === 'searchIcon') {
         if (searchTerm.trim() !== '') {
           try {
-            const response = await axios.get(`http://localhost:3001/search_pending_users?searchTerm=${searchTerm}`);
+            const response = await axios.get(`http://localhost:3001/search_users?searchTerm=${searchTerm}`);
             setSearchResults(response.data);
             // Save search results to localStorage
             localStorage.setItem('searchResults', JSON.stringify(response.data));

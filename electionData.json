@@ -1,3 +1,47 @@
 [
-
+  {
+    "title": "Dec general election",
+    "startTime": "2023-12-06T02:25",
+    "endTime": "2023-12-14T03:27",
+    "precincts": [
+      {
+        "name": "vsdfsdfs",
+        "zipcodeplus": "52240-3455",
+        "pollinglocation": "vhertg",
+        "pollingmanager": "gaergtg",
+        "officecontact": "hthshh"
+      },
+      {
+        "name": "jrthshgdfhg",
+        "zipcodeplus": "23455-3456",
+        "pollinglocation": "hsjrthgfh",
+        "pollingmanager": "aewrtaygerg",
+        "officecontact": "kthjfgdhfg"
+      }
+    ],
+    "races": [
+      {
+        "name": "mgrthdgh",
+        "term": "4 years",
+        "votingprecincts": "1,2"
+      }
+    ],
+    "candidates": [
+      {
+        "name": "jngabwdeuf",
+        "party": "yaergtadfg",
+        "bio": "sdgfsdga sdlgfsdg askdefjhsd asekdfjh asdekfjhsd "
+      },
+      {
+        "name": "gergerag",
+        "party": "hsgrfhsgfh",
+        "bio": "hserth asdrfgdfg asdergfsdfg"
+      },
+      {
+        "name": "hsrtdhsdh",
+        "party": "asgtsfdgf",
+        "bio": "sgsdfgd asgrfdg asrgertharfgr"
+      }
+    ]
+  }
 ]

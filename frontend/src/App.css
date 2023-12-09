@@ -241,6 +241,16 @@ h2 {
   padding: 5px;
 }
 
+#electionvote {
+  background-color: #228B22;
+  color: #e9ecef;
+  font-size: 1em;
+  cursor: pointer;
+  margin-top: 20px;
+  border-radius: 10px;
+  padding: 5px;
+}
+
 #electionsetup > .input-container > input {
   border-radius: 5px; /* Updated border radius value */
   border: 1px solid #e9ecef;
@@ -288,6 +298,18 @@ p:hover + .election-details {
   border: 1px solid #ccc;
   padding: 10px;
   z-index: 1;
+}
+
+#voterHome {
+  background-color: white;
+  padding: 50px;
+
+}
+
+#electiondetails {
+  background-color: white;
+  padding: 50px;
+
 }
 
 @media screen and (min-width: 860px)  {
